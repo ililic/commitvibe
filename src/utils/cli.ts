@@ -22,15 +22,32 @@ export async function promptForAction(
 
   // If --edit is set, go straight to edit mode
   if (options.edit) {
-    const { editedMessage } = await inquirer.prompt([
-      {
-        type: 'editor',
-        name: 'editedMessage',
-        message: 'Edit commit message:',
-        default: message,
-      },
-    ]);
-    return { action: 'commit', message: editedMessage };
+    try {
+      const { editedMessage } = await inquirer.prompt([
+        {
+          type: 'editor',
+          name: 'editedMessage',
+          message: 'Edit commit message:',
+          default: message,
+        },
+      ]);
+      return { action: 'commit', message: editedMessage };
+    } catch (error) {
+      log.error(`Failed to open editor: ${(error as Error).message}`);
+      log.warning('Falling back to text input. You can edit the message below:');
+
+      // Fall back to text input if editor fails
+      const { fallbackMessage } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'fallbackMessage',
+          message: 'Edit commit message (single line):',
+          default: message.split('\n')[0], // Just use the first line as default
+        },
+      ]);
+
+      return { action: 'commit', message: fallbackMessage };
+    }
   }
 
   // In normal mode, ask what to do
@@ -52,15 +69,67 @@ export async function promptForAction(
   ]);
 
   if (action === 'edit') {
-    const { editedMessage } = await inquirer.prompt([
-      {
-        type: 'editor',
-        name: 'editedMessage',
-        message: 'Edit commit message:',
-        default: message,
-      },
-    ]);
-    return { action: 'commit', message: editedMessage };
+    try {
+      // Try to use the editor
+      const { editedMessage } = await inquirer.prompt([
+        {
+          type: 'editor',
+          name: 'editedMessage',
+          message: 'Edit commit message:',
+          default: message,
+        },
+      ]);
+      return { action: 'commit', message: editedMessage };
+    } catch (error) {
+      log.error(`Failed to open editor: ${(error as Error).message}`);
+      log.warning('Falling back to text input. You can edit the message below:');
+
+      // If editor fails, fall back to a simple input prompt
+      try {
+        const lines = message.split('\n');
+        const summary = lines[0];
+        const details = lines.slice(1).join('\n');
+
+        // First get the summary line
+        const { summaryLine } = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'summaryLine',
+            message: 'Edit summary line:',
+            default: summary,
+          },
+        ]);
+
+        // Then get details (optional)
+        const { keepDetails } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'keepDetails',
+            message: 'Keep the existing details?',
+            default: true,
+          },
+        ]);
+
+        let finalDetails = details;
+        if (!keepDetails) {
+          const { newDetails } = await inquirer.prompt([
+            {
+              type: 'input',
+              name: 'newDetails',
+              message: 'Enter new details (use \\n for line breaks):',
+              default: '',
+            },
+          ]);
+          finalDetails = newDetails.replace(/\\n/g, '\n');
+        }
+
+        const finalMessage = summaryLine + (finalDetails ? '\n' + finalDetails : '');
+        return { action: 'commit', message: finalMessage };
+      } catch (error) {
+        log.error(`Failed to get input: ${(error as Error).message}`);
+        return { action: 'commit', message }; // Last resort, use original message
+      }
+    }
   }
 
   return { action, message };

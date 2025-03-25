@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import commit from './commands/commit';
 import { CommandOptions } from './types';
+import ConfigManager from './utils/config';
 
 const program = new Command();
 
@@ -23,6 +24,9 @@ const displayBanner = () => {
 
 // Main CLI definition
 const main = () => {
+  // Initialize the configuration and ensure temp directory is available
+  ConfigManager.ensureTempDir();
+
   displayBanner();
 
   program
