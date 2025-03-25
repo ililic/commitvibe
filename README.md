@@ -1,7 +1,7 @@
 # CommitVibe
 
 <div align="center">
-  <img src="https://via.placeholder.com/200x200?text=CommitVibe" alt="CommitVibe Logo" width="200" height="200">
+  <img src="https://placeholder.pics/svg/200x200/4682B4-FFFFFF/FFFFFF-4682B4/CommitVibe" alt="CommitVibe Logo" width="200" height="200">
   <p>Generate meaningful git commit messages with LLMs</p>
 </div>
 
