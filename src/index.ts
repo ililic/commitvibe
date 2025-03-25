@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 import { Command } from 'commander';
 import chalk from 'chalk';
 import commit from './commands/commit';
@@ -38,7 +37,7 @@ const main = () => {
     .option('-n, --no-edit', 'Skip edit prompt and commit directly', false)
     .option('-c, --clipboard', 'Copy generated message to clipboard without committing', false)
     .action(async (options: CommandOptions) => {
-      await commit(options);
+      await commit(options, program);
     });
 
   program.parse(process.argv);

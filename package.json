@@ -8,13 +8,13 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "start": "node --no-deprecation dist/index.js",
+    "dev": "node --no-deprecation -r ts-node/register src/index.ts",
     "test": "jest",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "npm run build",
-    "dev:mock": "COMMITVIBE_PROVIDER=mock ts-node src/index.ts"
+    "dev:mock": "COMMITVIBE_PROVIDER=mock node --no-deprecation -r ts-node/register src/index.ts"
   },
   "keywords": [
     "git",
