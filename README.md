@@ -33,7 +33,7 @@ yarn global add commitvibe
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/commitvibe.git
+git clone https://github.com/ililic/commitvibe.git
 cd commitvibe
 
 # Install dependencies
