@@ -75,7 +75,7 @@ describe('GitService', () => {
       });
 
       // Mock diff response
-      mockGit.diff.mockImplementation((args) => {
+      mockGit.diff.mockImplementation((args: string[]) => {
         if (!args.includes('--')) {
           return Promise.resolve('Full diff content');
         }

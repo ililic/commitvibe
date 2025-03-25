@@ -40,7 +40,7 @@ export class CommitMessageService {
 
     // Ensure subject line is not too long
     if (lines[0].length > 72) {
-      lines[0] = lines[0].substring(0, 72);
+      lines[0] = lines[0].substring(0, 72).trim();
     }
 
     return lines.join('\n');
